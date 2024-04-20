@@ -274,30 +274,27 @@ app.post("/searchuser", async (req, res) => {
         const { user } = req.body;
         const userDet = await userModel.find({ name: user });
 
-        if (userDet) {
+        if (userDet.length > 0) {
             res.status(200).send({
                 success: true,
                 message: "User Found",
                 user: userDet
-            })
-        }
-
-        else {
+            });
+        } else {
             res.status(400).send({
                 success: false,
                 message: "User Not Found",
-            })
+            });
         }
-        console.log(userDet);
-    }
-    catch (err) {
+
+        console.log(userDet); // Move this outside of if-else blocks
+    } catch (err) {
         res.status(400).send({
             success: false,
             message: "Something Went Wrong",
-        })
+        });
     }
-
-})
+});
 
 app.get("/userdetails/:id", async (req, res) => {
     try {
