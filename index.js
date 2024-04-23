@@ -314,6 +314,7 @@ app.post("/searchuser", async (req, res) => {
     }
 });
 
+
 app.get("/userdetails/:id", async (req, res) => {
     try {
         const { id } = req.params;
