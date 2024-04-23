@@ -42,30 +42,32 @@ app.post("/register", upload.single('file'), async (req, res) => {
                 success: false,
                 message: "Enter all the details"
             });
-        }
-        const existingUser = await userModel.findOne({ email: email });
-        if (existingUser) {
-            res.status(500).send({
-                success: false,
-                message: "User already registered"
-            });
-        }
-        else {
-            const location = `${req.file.filename}`;
-            const data = await userModel({ name, email, password, location }).save();
-            if (data) {
-                res.status(200).send({
-                    success: true,
-                    message: "User Registered"
-                })
+        } else {
+            const existingUser = await userModel.findOne({ email: email });
+            if (existingUser) {
+                res.status(500).send({
+                    success: false,
+                    message: "User already registered"
+                });
             }
             else {
-                res.status(400).send({
-                    success: false,
-                    message: "User Not Registered"
-                })
+                const location = `${req.file.filename}`;
+                const data = await userModel({ name, email, password, location }).save();
+                if (data) {
+                    res.status(200).send({
+                        success: true,
+                        message: "User Registered"
+                    })
+                }
+                else {
+                    res.status(400).send({
+                        success: false,
+                        message: "User Not Registered"
+                    })
+                }
             }
         }
+
     }
     catch (err) {
         console.log(err);
@@ -84,30 +86,33 @@ app.post("/login", async (req, res) => {
             message: "Enter all the details"
         });
     }
-    const user = await userModel.findOne({ email: email });
-    if (user) {
-        if (user.password === password) {
-            const token = await jwt.sign({ _id: user._id }, 'BCKWJBFWIO9CNL', { expiresIn: '7d' });
-            res.status(200).send({
-                success: true,
-                message: "Log In Successful",
-                user: user,
-                token: token
-            })
+    else {
+        const user = await userModel.findOne({ email: email });
+        if (user) {
+            if (user.password === password) {
+                const token = await jwt.sign({ _id: user._id }, 'BCKWJBFWIO9CNL', { expiresIn: '7d' });
+                res.status(200).send({
+                    success: true,
+                    message: "Log In Successful",
+                    user: user,
+                    token: token
+                })
+            }
+            else {
+                res.status(500).send({
+                    success: false,
+                    message: "Wrong Password",
+                })
+            }
         }
         else {
-            res.status(500).send({
+            res.status(400).send({
                 success: false,
-                message: "Wrong Password",
+                message: "User Not Registered",
             })
         }
     }
-    else {
-        res.status(400).send({
-            success: false,
-            message: "User Not Registered",
-        })
-    }
+
 })
 
 app.post("/uploadpost", upload.single('file'), async (req, res) => {
@@ -148,19 +153,22 @@ app.post("/forgotpassword", async (req, res) => {
             message: "Enter all the details"
         });
     }
-    const user = await userModel.findOneAndUpdate({ email: email }, { $set: { password: newpassword } }, { new: false });
-    if (user) {
-        res.status(200).send({
-            success: true,
-            message: "Password Changed"
-        })
-    }
     else {
-        res.status(500).send({
-            success: false,
-            message: "User Not Found"
-        })
+        const user = await userModel.findOneAndUpdate({ email: email }, { $set: { password: newpassword } }, { new: false });
+        if (user) {
+            res.status(200).send({
+                success: true,
+                message: "Password Changed"
+            })
+        }
+        else {
+            res.status(500).send({
+                success: false,
+                message: "User Not Found"
+            })
+        }
     }
+
 })
 
 app.post("/like", async (req, res) => {
