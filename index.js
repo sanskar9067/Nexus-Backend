@@ -37,6 +37,12 @@ app.get("/", (req, res) => {
 app.post("/register", upload.single('file'), async (req, res) => {
     try {
         const { name, email, password } = req.body;
+        if (!name || !email || !password) {
+            res.status(500).send({
+                success: false,
+                message: "Enter all the details"
+            });
+        }
         const existingUser = await userModel.findOne({ email: email });
         if (existingUser) {
             res.status(500).send({
@@ -72,6 +78,12 @@ app.post("/register", upload.single('file'), async (req, res) => {
 
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
+    if (!email || !password) {
+        res.status(500).send({
+            success: false,
+            message: "Enter all the details"
+        });
+    }
     const user = await userModel.findOne({ email: email });
     if (user) {
         if (user.password === password) {
@@ -130,6 +142,12 @@ app.get("/getpost", (req, res) => {
 
 app.post("/forgotpassword", async (req, res) => {
     const { email, newpassword } = req.body;
+    if (!email || !newpassword) {
+        res.status(500).send({
+            success: false,
+            message: "Enter all the details"
+        });
+    }
     const user = await userModel.findOneAndUpdate({ email: email }, { $set: { password: newpassword } }, { new: false });
     if (user) {
         res.status(200).send({
