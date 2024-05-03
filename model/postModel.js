@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
     photo: String,
     name: String,
     email: String,
-    post: { type: String, default: "" },
+    post: { type: String, default: ""},
     location: String,
     likes: [{ id: String }],
     comments: [{ name: String, text: String }]
