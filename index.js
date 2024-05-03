@@ -513,6 +513,22 @@ app.post("/getmessages", async (req, res) => {
     }
 })
 
+app.get("/userdetailname/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(id);
+        const user = await userModel.findOne({ _id: id });
+        if (user) {
+            res.status(200).send({
+                name: user.name
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+})
+
 app.listen(PORT, () => {
     console.log(`Server started on port: ${PORT}`);
 })
